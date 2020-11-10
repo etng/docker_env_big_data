@@ -1,0 +1,48 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    env_file:
+      - ./.env      
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.4.6
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.1 
+    ports:
+      - "5601:5601"
+    env_file:
+      - ./.env
+    environment:
+      ELASTICSEARCH_HOSTS: http://es:9200 
+      ELASTICSEARCH_URL: http://es:9200 
+      ELASTICSEARCH_USERNAME: elastic 
+      ELASTICSEARCH_PASSWORD: kd2020 
+    restart: unless-stopped 
+  es:
+    privileged: true 
+    image: elasticsearch:7.9.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      discovery.type: single-node
+    volumes:
+      - ./config/es.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./data/es:/usr/share/elasticsearch/data 
+  redis:
+    image: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data

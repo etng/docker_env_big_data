@@ -1,0 +1,7 @@
+cluster.name: "single-es"
+network.host: 0.0.0.0
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-headers: "*"
+xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
