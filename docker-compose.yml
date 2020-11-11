@@ -2,10 +2,12 @@ version: '2'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
+    restart: unless-stopped
     ports:
       - "2181:2181"
   kafka:
     image: wurstmeister/kafka
+    restart: unless-stopped
     ports:
       - "9092:9092"
     env_file:
@@ -17,6 +19,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.1 
+    restart: unless-stopped
     ports:
       - "5601:5601"
     env_file:
@@ -30,11 +33,12 @@ services:
   es:
     privileged: true 
     image: elasticsearch:7.9.1
+    restart: unless-stopped
     ports:
       - "9200:9200"
       - "9300:9300"
     environment:
-      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
       discovery.type: single-node
     volumes:
       - ./config/es.yml:/usr/share/elasticsearch/config/elasticsearch.yml
