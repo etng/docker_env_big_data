@@ -1,6 +1,7 @@
 up:
-	sudo docker-compose pull
 	sudo docker-compose up -d
+pull:
+	sudo docker-compose pull	
 consume:
 	sudo docker-compose exec kafka  kafka-console-consumer.sh  --bootstrap-server :9092 --group console-consumer --property print.timestamp=true --property print.key=true --topic spider_data 
 passwd:

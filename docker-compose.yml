@@ -15,8 +15,32 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: 192.168.4.6
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # http://kafka.apache.org/documentation.html#brokerconfigs
+      # 日志滚动的周期时间(小时,毫秒，log.roll.ms优先级更高)，到达指定周期时强制生成一个新的segment
+      KAFKA_LOG_ROLL_MS: 10000
+      # 过期segment处理算法，默认delete
+      KAFKA_CLEANUP_POLICY: delete
+      # 日志保留时间(小时，分钟，毫秒 优先级依次升高)，超出保留时间的日志执行cleanup.policy定义的操作
+      KAFKA_LOG_RETENTION_MS: 100000
+      # log checker的检测是否需要删除文件的周期,默认300000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 50000
+      # 删除日志文件前的保留一段时间。默认60000
+      KAFKA_LOG_SEGMENT_DELETE_DELAY_MS: 0 
+      # 每个segment的最大容量上限(默认1GB),到达指定容量时会强制生成一个新的segment
+      KAFKA_MESSAGE_MAX_BYTES: 2000000
+      # partition:replica[:cleanup.policy] join with ","
+      KAFKA_CREATE_TOPICS: "spider_data:1:1,spider_task:1:1:compact"     
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    restart: unless-stopped
+    hostname: kafka-manager
+    ports:
+      - "9093:9000"
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      TZ: CST-8   
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.1 
     restart: unless-stopped
